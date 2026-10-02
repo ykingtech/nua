@@ -1,8 +1,10 @@
 name: Nua
+
 options:
   bundleIdPrefix: com.ykingtech
   deploymentTarget:
     iOS: "16.0"
+
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: com.ykingtech.nua
@@ -10,14 +12,20 @@ settings:
     CURRENT_PROJECT_VERSION: 1
     MARKETING_VERSION: 1.0
     CODE_SIGN_STYLE: Automatic
+
 targets:
   Nua:
     type: application
     platform: iOS
+
     sources:
       - path: Nua
+
     info:
       path: Nua/Info.plist
+      properties:
+        GEMINI_API_KEY: "$(GEMINI_API_KEY)"
+
     settings:
       base:
         PRODUCT_NAME: Nua
