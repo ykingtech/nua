@@ -16,8 +16,6 @@ targets:
     platform: iOS
     sources:
       - path: Nua
-    resources:
-      - path: Nua/Assets.xcassets
     info:
       path: Nua/Info.plist
     settings:
