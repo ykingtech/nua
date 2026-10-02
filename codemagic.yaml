@@ -1,0 +1,27 @@
+workflows:
+  ios-release:
+    name: Nua iOS Release
+    instance_type: mac_mini_m2
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ykingtech.nua
+      vars:
+        GEMINI_API_KEY: $GEMINI_API_KEY
+        GEMINI_MODEL: $GEMINI_MODEL
+      xcode: latest
+    integrations:
+      app_store_connect: codemagic_app_store_connect
+    scripts:
+      - name: Set build number
+        script: agvtool new-version -all $BUILD_NUMBER
+      - name: Build IPA
+        script: xcode-project build-ipa --project "Nua.xcodeproj" --scheme "Nua" --config Release
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - /tmp/*.dSYM.zip
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
