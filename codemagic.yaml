@@ -21,8 +21,7 @@ workflows:
       - name: Apply iOS signing profiles
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
-  script: |
-    xcode-project build-ipa \
+  script: xcode-project build-ipa \
       --project "Nua.xcodeproj" \
       --scheme "Nua" \
       --config Release \
