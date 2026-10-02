@@ -12,12 +12,12 @@ workflows:
     integrations:
       app_store_connect: codemagic_app_store_connect
     scripts:
-      - name: Set build number
-        script: agvtool new-version -all $BUILD_NUMBER
       - name: Generate a valid Xcode project
         script: |
           if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
           xcodegen generate --spec project.yml
+      - name: Set build number
+        script: agvtool new-version -all $BUILD_NUMBER
       - name: Apply iOS signing profiles
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
