@@ -2,34 +2,51 @@ workflows:
   ios-release:
     name: Nua iOS Release
     instance_type: mac_mini_m2
+
     environment:
       groups:
         - nua-secrets
+
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.ykingtech.nua
+
       xcode: latest
+
     integrations:
       app_store_connect: codemagic_app_store_connect
+
     scripts:
       - name: Generate a valid Xcode project
         script: |
-          if ! command -v xcodegen >/dev/null 2>&1; then brew install xcodegen; fi
+          if ! command -v xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+
           xcodegen generate --spec project.yml
+
       - name: Set build number
-        script: agvtool new-version -all $BUILD_NUMBER
+        script: |
+          agvtool new-version -all "$BUILD_NUMBER"
+
       - name: Apply iOS signing profiles
-        script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
+        script: |
+          xcode-project use-profiles \
+            --project "$CM_BUILD_DIR/Nua.xcodeproj"
+
       - name: Build IPA
-  script: xcode-project build-ipa \
-      --project "Nua.xcodeproj" \
-      --scheme "Nua" \
-      --config Release \
-      --archive-xcargs "GEMINI_API_KEY=$GEMINI_API_KEY"
+        script: |
+          xcode-project build-ipa \
+            --project "Nua.xcodeproj" \
+            --scheme "Nua" \
+            --config "Release" \
+            --archive-xcargs "GEMINI_API_KEY=$GEMINI_API_KEY"
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - /tmp/*.dSYM.zip
+
     publishing:
       app_store_connect:
         auth: integration
