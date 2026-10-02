@@ -23,6 +23,10 @@ struct ContentView: View {
                     }.padding().background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
                 }
             }.padding() }.navigationBarTitleDisplayMode(.inline)
-        }.onChange(of: scenePhase) { _, phase in if phase == .active { viewModel.loadClipboard() } }
+        }.onChange(of: scenePhase) { phase in
+    if phase == .active {
+        viewModel.loadClipboard()
+    }
+}
     }
 }
