@@ -14,8 +14,14 @@ workflows:
     scripts:
       - name: Set build number
         script: agvtool new-version -all $BUILD_NUMBER
+      - name: Initialize signing keychain
+        script: keychain initialize
+      - name: Fetch App Store signing files
+        script: app-store-connect fetch-signing-files com.ykingtech.nua --type IOS_APP_STORE --create
+      - name: Install signing certificate
+        script: keychain add-certificates
       - name: Apply iOS signing profiles
-        script: xcode-project use-profiles
+        script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
         script: xcode-project build-ipa --project "Nua.xcodeproj" --scheme "Nua" --config Release
     artifacts:
