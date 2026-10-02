@@ -14,6 +14,8 @@ workflows:
     scripts:
       - name: Set build number
         script: agvtool new-version -all $BUILD_NUMBER
+      - name: Apply iOS signing profiles
+        script: xcode-project use-profiles
       - name: Build IPA
         script: xcode-project build-ipa --project "Nua.xcodeproj" --scheme "Nua" --config Release
     artifacts:
