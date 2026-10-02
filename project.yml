@@ -2,7 +2,7 @@ name: Nua
 options:
   bundleIdPrefix: com.ykingtech
   deploymentTarget:
-    iOS: "15.0"
+    iOS: "16.0"
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: com.ykingtech.nua
