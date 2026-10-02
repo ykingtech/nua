@@ -21,7 +21,12 @@ workflows:
       - name: Apply iOS signing profiles
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
-        script: xcode-project build-ipa --project "Nua.xcodeproj" --scheme "Nua" --config Release
+  script: |
+    xcode-project build-ipa \
+      --project "Nua.xcodeproj" \
+      --scheme "Nua" \
+      --config Release \
+      --archive-xcargs "GEMINI_API_KEY=$GEMINI_API_KEY"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
