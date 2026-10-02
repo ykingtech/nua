@@ -3,12 +3,11 @@ workflows:
     name: Nua iOS Release
     instance_type: mac_mini_m2
     environment:
+      groups:
+        - nua-secrets
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.ykingtech.nua
-      vars:
-        GEMINI_API_KEY: $GEMINI_API_KEY
-        GEMINI_MODEL: $GEMINI_MODEL
       xcode: latest
     integrations:
       app_store_connect: codemagic_app_store_connect
