@@ -15,9 +15,13 @@ targets:
     type: application
     platform: iOS
     sources:
-      - path: Nua
-        excludes:
-          - Info.plist
+      - path: Nua/App
+      - path: Nua/Models
+      - path: Nua/Services
+      - path: Nua/ViewModels
+      - path: Nua/Views
+    resources:
+      - path: Nua/Assets.xcassets
     info:
       path: Nua/Info.plist
     settings:
