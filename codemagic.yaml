@@ -22,6 +22,13 @@ workflows:
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
         script: xcode-project build-ipa --project "Nua.xcodeproj" --scheme "Nua" --config Release
+      - name: Validate exported app metadata
+        script: |
+          validation_dir="$(mktemp -d)"
+          unzip -q build/ios/ipa/Nua.ipa -d "$validation_dir"
+          app_plist="$(find "$validation_dir/Payload" -name Info.plist -print -quit)"
+          test -n "$app_plist"
+          test "$(plutil -extract CFBundleIconName raw "$app_plist")" = "AppIcon"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

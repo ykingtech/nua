@@ -20,10 +20,7 @@ targets:
       - path: Nua/Services
       - path: Nua/ViewModels
       - path: Nua/Views
-    resources:
       - path: Nua/Assets.xcassets
-    info:
-      path: Nua/Info.plist
     settings:
       base:
         PRODUCT_NAME: Nua
