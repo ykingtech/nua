@@ -5,13 +5,24 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ScrollView { VStack(alignment: .leading, spacing: 20) {
                 HStack(spacing: 10) { Image("NuaLogo").resizable().scaledToFit().frame(width: 48, height: 48).clipShape(RoundedRectangle(cornerRadius: 12)); Text("Nua").font(.largeTitle.bold()) }
                 Text("Japanese, in the words they meant.").foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Original", systemImage: "character.cursor.ibeam")
-                    TextEditor(text: $viewModel.input).frame(minHeight: 130).padding(8).background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    Group {
+                        if viewModel.input.isEmpty {
+                            Text("Copy a Japanese message, then tap Paste & Translate.")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text(viewModel.input)
+                                .textSelection(.enabled)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 130, alignment: .topLeading)
+                    .padding(12)
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
                     Button { viewModel.loadClipboard(); viewModel.translate() } label: { Label("Paste & Translate", systemImage: "doc.on.clipboard") }.buttonStyle(.borderedProminent).controlSize(.large)
                 }
                 if viewModel.isLoading { ProgressView("Translating…").frame(maxWidth: .infinity, alignment: .center) }
@@ -23,10 +34,7 @@ struct ContentView: View {
                     }.padding().background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
                 }
             }.padding() }.navigationBarTitleDisplayMode(.inline)
-        }.onChange(of: scenePhase) { phase in
-    if phase == .active {
-        viewModel.loadClipboard()
-    }
-}
+        }.navigationViewStyle(.stack)
+        .onChange(of: scenePhase) { phase in if phase == .active { viewModel.loadClipboard() } }
     }
 }
