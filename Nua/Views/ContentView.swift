@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var viewModel: TranslationViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @FocusState private var isEditingOriginal: Bool
 
     var body: some View {
         NavigationView {
@@ -11,19 +12,18 @@ struct ContentView: View {
                 Text("Japanese, in the words they meant.").foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Original", systemImage: "character.cursor.ibeam")
-                    Group {
-                        if viewModel.input.isEmpty {
-                            Text("Copy a Japanese message, then tap Paste & Translate.")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            Text(viewModel.input)
-                                .textSelection(.enabled)
+                    TextEditor(text: $viewModel.input)
+                        .focused($isEditingOriginal)
+                        .frame(minHeight: 130)
+                        .padding(8)
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    if isEditingOriginal {
+                        Button { isEditingOriginal = false } label: {
+                            Label("Hide Keyboard", systemImage: "keyboard.chevron.compact.down")
                         }
+                        .buttonStyle(.bordered)
                     }
-                    .frame(maxWidth: .infinity, minHeight: 130, alignment: .topLeading)
-                    .padding(12)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
-                    Button { viewModel.loadClipboard(); viewModel.translate() } label: { Label("Paste & Translate", systemImage: "doc.on.clipboard") }.buttonStyle(.borderedProminent).controlSize(.large)
+                    Button { isEditingOriginal = false; viewModel.loadClipboard(); viewModel.translate() } label: { Label("Paste & Translate", systemImage: "doc.on.clipboard") }.buttonStyle(.borderedProminent).controlSize(.large)
                 }
                 if viewModel.isLoading { ProgressView("Translating…").frame(maxWidth: .infinity, alignment: .center) }
                 if let error = viewModel.errorMessage { Label(error, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.subheadline) }
@@ -34,7 +34,14 @@ struct ContentView: View {
                     }.padding().background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
                 }
             }.padding() }.navigationBarTitleDisplayMode(.inline)
-        }.navigationViewStyle(.stack)
+        }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isEditingOriginal = false }
+            }
+        }
+        .navigationViewStyle(.stack)
         .onChange(of: scenePhase) { phase in if phase == .active { viewModel.loadClipboard() } }
     }
 }
