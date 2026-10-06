@@ -15,13 +15,9 @@ targets:
     type: application
     platform: iOS
     sources:
-      - path: Nua/App
-      - path: Nua/Models
-      - path: Nua/Services
-      - path: Nua/ViewModels
-      - path: Nua/Views
-    resources:
-      - path: Nua/Assets.xcassets
+      - path: Nua
+        excludes:
+          - Info.plist
     info:
       path: Nua/Info.plist
     settings:
@@ -29,4 +25,5 @@ targets:
         PRODUCT_NAME: Nua
         INFOPLIST_FILE: Nua/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_CFBundleIconName: AppIcon
         TARGETED_DEVICE_FAMILY: "1"
