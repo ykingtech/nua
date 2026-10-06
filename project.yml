@@ -24,6 +24,9 @@ targets:
     settings:
       base:
         PRODUCT_NAME: Nua
+        EXECUTABLE_NAME: Nua
+        MACH_O_TYPE: mh_execute
+        WRAPPER_EXTENSION: app
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Nua/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

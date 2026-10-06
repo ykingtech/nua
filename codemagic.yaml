@@ -29,6 +29,8 @@ workflows:
           app_plist="$(find "$validation_dir/Payload" -name Info.plist -print -quit)"
           test -n "$app_plist"
           test "$(plutil -extract CFBundleIconName raw "$app_plist")" = "AppIcon"
+          executable_name="$(plutil -extract CFBundleExecutable raw "$app_plist")"
+          test -x "$(dirname "$app_plist")/$executable_name"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
