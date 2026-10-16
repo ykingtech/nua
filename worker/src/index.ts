@@ -43,7 +43,23 @@ export default {
     });
 
     if (response.status === 429) return Response.json({ error: "Nua is busy right now. Please try again in a moment." }, { status: 429, headers: jsonHeaders });
-    if (!response.ok) return Response.json({ error: "Nua’s translation service is unavailable. Please try again." }, { status: 502, headers: jsonHeaders });
+    if (!response.ok) {
+      // Keep the provider response out of the app, but retain it in Worker logs so
+      // a failed key, disabled API, or unavailable model can be diagnosed safely.
+      const providerDetails = await response.text();
+      console.error("Gemini generateContent failed", {
+        status: response.status,
+        model,
+        details: providerDetails
+      });
+
+      const error = response.status === 401 || response.status === 403
+        ? "Nua’s Gemini API key was rejected. Please update the Worker secret."
+        : response.status === 404
+          ? "Nua’s selected Gemini model is unavailable. Please update GEMINI_MODEL."
+          : "Nua’s translation service is unavailable. Please try again.";
+      return Response.json({ error }, { status: 502, headers: jsonHeaders });
+    }
 
     const gemini = await response.json<GeminiResponse>();
     const output = gemini.candidates?.[0]?.content?.parts?.[0]?.text;
