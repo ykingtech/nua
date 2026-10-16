@@ -32,7 +32,7 @@ export default {
     if (input.length > 6000) return Response.json({ error: "That message is too long. Please shorten it and try again." }, { status: 413, headers: jsonHeaders });
     if (!/[\u3040-\u30ff\u3400-\u9fff]/.test(input)) return Response.json({ error: "Paste a Japanese message to translate." }, { status: 422, headers: jsonHeaders });
 
-    const model = env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
