@@ -23,7 +23,8 @@ final class GeminiService: GeminiServing {
     init(session: URLSession = .shared) {
         self.session = session
         self.apiKey = (Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        self.model = Bundle.main.object(forInfoDictionaryKey: "GEMINI_MODEL") as? String ?? "gemini-2.5-flash"
+        let configuredModel = (Bundle.main.object(forInfoDictionaryKey: "GEMINI_MODEL") as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        self.model = configuredModel.isEmpty || configuredModel.hasPrefix("$(") ? "gemini-2.5-flash" : configuredModel
     }
 
     func translate(japanese: String) async throws -> TranslationResult {
@@ -40,7 +41,14 @@ final class GeminiService: GeminiServing {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw GeminiError.invalidResponse }
         if http.statusCode == 429 { throw GeminiError.rateLimited }
-        guard (200..<300).contains(http.statusCode) else { throw GeminiError.server("Gemini couldn’t translate this message. Please try again.") }
+        guard (200..<300).contains(http.statusCode) else {
+            switch http.statusCode {
+            case 400, 401, 403:
+                throw GeminiError.server("Gemini rejected this request. Check the API key and model configuration.")
+            default:
+                throw GeminiError.server("Gemini couldn’t translate this message. Please try again.")
+            }
+        }
         let envelope = try JSONDecoder().decode(GeminiEnvelope.self, from: data)
         guard let text = envelope.candidates?.first?.content.parts.first?.text, let json = text.data(using: .utf8), let result = try? JSONDecoder().decode(TranslationResult.self, from: json), !result.naturalEnglish.isEmpty else { throw GeminiError.emptyResponse }
         return result

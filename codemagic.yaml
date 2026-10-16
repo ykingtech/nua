@@ -18,6 +18,11 @@ workflows:
           xcodegen generate --spec project.yml
       - name: Set build number
         script: agvtool new-version -all $BUILD_NUMBER
+      - name: Add Gemini configuration to the build
+        script: |
+          test -n "$GEMINI_API_KEY"
+          plutil -replace GEMINI_API_KEY -string "$GEMINI_API_KEY" "$CM_BUILD_DIR/Nua/Info.plist"
+          plutil -replace GEMINI_MODEL -string "${GEMINI_MODEL:-gemini-2.5-flash}" "$CM_BUILD_DIR/Nua/Info.plist"
       - name: Apply iOS signing profiles
         script: xcode-project use-profiles --project "$CM_BUILD_DIR/Nua.xcodeproj"
       - name: Build IPA
