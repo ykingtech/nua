@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "nua-gemini-proxy",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-16",
+  "workers_dev": true,
+  "vars": {
+    "GEMINI_MODEL": "gemini-2.5-flash"
+  },
+  "secrets": {
+    "required": ["GEMINI_API_KEY"]
+  }
+}

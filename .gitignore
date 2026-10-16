@@ -9,4 +9,5 @@ xcuserdata/
 *.pem
 *.p8
 .env
+worker/.dev.vars
 Secrets.xcconfig
